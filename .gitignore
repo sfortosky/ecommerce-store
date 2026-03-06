@@ -1,0 +1,25 @@
+# BACKEND
+**/.venv/
+**/__pycache__/
+*.pyc
+
+# SECRETS
+.env
+backend/.env
+.env.local
+
+# FRONTEND
+**/node_modules/
+dist/
+build/
+.next/
+
+# IDEs & SYSTEM
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# DATABASE
+*.sqlite3
+*.log
