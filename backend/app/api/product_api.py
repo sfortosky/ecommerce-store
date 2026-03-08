@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -26,9 +26,33 @@ def read_product(product_id: int, db: Session = Depends(get_db)):
 
 # GET - Get all products
 @router.get("/", response_model=List[Product])
-def read_products(db: Session = Depends(get_db)):
-    # Return a list of all products in the database (blank if empty)
-    return db.query(ProductModel).all()
+def read_products(
+        db: Session = Depends(get_db),
+        skip: int = 0,
+        limit: int = Query(10, ge=1, le=100), # Apply an upper and lower limit
+        search: str = "",
+        sort: str = "id_asc"
+):
+    # Create a base query
+    query = db.query(ProductModel)
+
+    # Apply search filters to the query
+    if search:
+        query = query.filter(ProductModel.name.ilike(f"%{search}%"))
+
+    # Apply sorting
+    if sort == "price_asc":
+        query = query.order_by(ProductModel.price.asc())
+    elif sort == "price_desc":
+        query = query.order_by(ProductModel.price.desc())
+    else:
+        query = query.order_by(ProductModel.id.asc())
+
+    # Create a list by executing the query (with limits)
+    products = query.offset(skip).limit(limit).all()
+
+    # Return the filtered list of products
+    return products
 
 
 # POST - Create a product
