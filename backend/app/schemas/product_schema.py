@@ -11,11 +11,11 @@ class ProductBase(BaseModel):
     stock_quantity: int = Field(ge=0, default=0)
     is_active: bool = True
 
-
+# Product creation model (all shared)
 class ProductCreate(ProductBase):
     pass
 
-
+# Product return model
 class Product(ProductBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
